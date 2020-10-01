@@ -20,22 +20,31 @@ const nanoid = customRandom(alphabet, nextSize, size => {
   return (new Uint8Array(size).map(() => 256 * rng()));
 })
 
-let id;
+let id = 'undefined';
 
-// Because the seed is static, we can just iterate through how many
-// shorthands already is generated, and just take the next from the
-// generator. i.e. if the 200th generated shorthand is 'u7', the 200th iteration
-// will always generate 'u7'
-for (let i = 0; i <= currentShorthandsCount; i++){
-  const temp = nanoid();
-  if(i === currentShorthandsCount){
-    id = temp;
-  }
+const uniques = new Set();
+
+// Because the seed is static, we can just iterate until we get the same count in uniques
+// as shorthands already generated, and just take the next unique value from the
+// generator. i.e. if the 200th generated shorthand is 'u7', the 199th slot in uniques
+// will always have the value 'u7'
+let iterationsCount = 0;
+while (true){
+    const shorthand = nanoid();
+    uniques.add(shorthand);
+    if(uniques.size === currentShorthandsCount + 1){
+      id = shorthand;
+      break;
+    }
+    iterationsCount++;
 }
-
 console.log('=========================');
-console.log(`    Iterations: ${currentShorthandsCount}`);
+console.log(`    Already generated shorthands: ${currentShorthandsCount}`);
+console.log('=========================');
+console.log('=========================');
+console.log(`    Iterations: ${iterationsCount}`);
 console.log('=========================\n');
 console.log('=========================');
 console.log(`    Next Id for shorthand: https://1337co.de/${id}`);
 console.log('=========================');
+
